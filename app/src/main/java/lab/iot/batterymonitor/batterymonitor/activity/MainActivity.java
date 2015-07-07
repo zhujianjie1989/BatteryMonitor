@@ -1,6 +1,8 @@
 package lab.iot.batterymonitor.batterymonitor.activity;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,15 +15,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import lab.iot.batterymonitor.batterymonitor.Adapter.ListAdapter;
 import lab.iot.batterymonitor.batterymonitor.R;
 import lab.iot.batterymonitor.batterymonitor.service.BatteryService;
+import lab.iot.batterymonitor.batterymonitor.util.BluetoothCallBack;
+import lab.iot.batterymonitor.batterymonitor.view.ViewHolder;
 
 
 public class MainActivity extends Activity {
@@ -31,13 +42,15 @@ public class MainActivity extends Activity {
     private final int SENSOR_DELAY_NORMAL = 3;
     public    int curr_power = -1;
     private BatteryService batteryService;
-    public static Map<String,Boolean>flags = new HashMap<String,Boolean>();
+    public static Map<String,ViewHolder>viewHolderMap = new HashMap<String,ViewHolder>();
     public SensorManager  sensorManager ;
     public int[] sensorType = {Sensor.TYPE_MAGNETIC_FIELD,Sensor.TYPE_LIGHT,Sensor.TYPE_PROXIMITY,Sensor.TYPE_ACCELEROMETER,Sensor.TYPE_GYROSCOPE};
     public int[] sensorSampleType={SENSOR_DELAY_FASTEST,SENSOR_DELAY_GAME ,SENSOR_DELAY_UI,SENSOR_DELAY_NORMAL};
     public String[] sensorName = {"Magnetic","Light","Proximity","Accelerometer","Gyroscope"};
     public Map<String,Sensor> sensorMap = new HashMap<String,Sensor>();
-
+    public boolean button_flag = false;
+    private Timer timer;
+    private BluetoothAdapter mBluetoothAdapter;
 
     private Handler handler = new Handler(){
         @Override
@@ -54,6 +67,10 @@ public class MainActivity extends Activity {
             capcity.setText(curr_power+"");
             curr.setText((msg.arg2)+"");
             usage.setText((curr_power-msg.arg2)+"");
+            if (!button_flag) {
+                Button startButton = (Button)findViewById(R.id.BT_Start);
+                startButton.setEnabled(true);
+            }
         }
     };
 
@@ -82,18 +99,116 @@ public class MainActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("listView.setOnItemClickListener", "" + position);
+                Log.e("setOnItemClickListener", "" + position);
             }
         });
 
         batteryService= new BatteryService(this);
-        batteryService.startTimer();
+
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        initBluetooth();
+        final Button startButton = (Button)findViewById(R.id.BT_Start);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Set<String> keys = viewHolderMap.keySet();
+                Iterator<String> ite = keys.iterator();
+
+                if (!button_flag) {
+                    EditText time = (EditText) findViewById(R.id.EB_Timer);
+                    batteryService.startTimer(Integer.parseInt(time.getText().toString()));
+                    curr_power=-1;
+                    startButton.setEnabled(false);
+
+                    while (ite.hasNext()) {
+                        String key = ite.next();
+                        if (viewHolderMap.get(key).flag) {
+                            if (viewHolderMap.get(key).SensorIndex == 5) {
+                                Log.e("start bluetooth", "start bluetooth");
+                                final BluetoothCallBack callBack = new BluetoothCallBack();
+                                timer = new Timer();
+                                setOff_flag(false);
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        if (isOff_flag()) {
+                                            mBluetoothAdapter.stopLeScan(callBack);
+                                            timer.cancel();
+                                            return;
+                                        }
+                                        if (getFlag()) {
+                                            mBluetoothAdapter.startLeScan(callBack);
+                                        } else {
+                                            mBluetoothAdapter.stopLeScan(callBack);
+                                        }
+                                        setFlag(!getFlag());
+                                    }
+                                }, 1000, (viewHolderMap.get(key).sp_selectIndex + 1) * 1000);
+
+                            } else {
+                                registerSensor(viewHolderMap.get(key).SensorIndex, viewHolderMap.get(key).sp_selectIndex);
+                            }
+
+                        }
+                    }
+
+                    button_flag = !button_flag;
+                }
+
+
+            }
+        });
+
+
+
+    }
+
+    public void stopRun(){
+        Log.e("unRegister", " unRegister ");
+        Set<String> keys = viewHolderMap.keySet();
+        Iterator<String> ite = keys.iterator();
+        if (button_flag){
+
+            while (ite.hasNext()) {
+                String key = ite.next();
+                Log.e("unRegister","  "+key);
+                if (viewHolderMap.get(key).flag) {
+                    if (viewHolderMap.get(key).SensorIndex == 5) {
+                        setOff_flag(true);
+                        continue;
+                    }
+                    unRegister(viewHolderMap.get(key).SensorIndex);
+
+                }
+            }
+            button_flag = !button_flag;
+        }
+
+    }
+    private boolean off_flag = false;
+    public boolean isOff_flag() { return off_flag;}
+    public void setOff_flag(boolean off_flag) {this.off_flag = off_flag;}
+
+    private boolean flag =true;
+    private void setFlag(boolean flag){this.flag = flag;}
+    private boolean getFlag(){  return flag;    }
+
+    private void initBluetooth(){
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            (new Toast(this)).makeText(this,"mBluetoothAdapter == null",Toast.LENGTH_LONG);
+        }
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            this.startActivityForResult(enableBtIntent, 0);
+            (new Toast(this)).makeText(this, "mBluetoothAdapter.isEnabled() ==  no", Toast.LENGTH_LONG);
+        }
 
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -163,43 +278,46 @@ public class MainActivity extends Activity {
         public void run() {
 
 
-            value = sensorEvent.values;
+
             if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
             {
 
-                if( flags.get("Magnetic"))
+                if( viewHolderMap.get("Magnetic").flag)
                 {
-                  //  Log.e("Magnetic","Magnetic");
-                   float curr = value[0]/10;
+                   // Log.e("Magnetic","Magnetic");
+                    value = sensorEvent.values;
+
 
                 }
             }else if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT  )
             {
 
-                if( flags.get("Light")) {
-                 //   Log.e("Light","Light");
+                if( viewHolderMap.get("Light").flag) {
+                  //  Log.e("Light","Light");
+                    value = sensorEvent.values;
 
                 }
             }else if (sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY  )
             {
 
-                if( flags.get("Proximity")) {
-
-                 //   Log.e("Proximity","Proximity");
+                if( viewHolderMap.get("Proximity").flag) {
+                  //  Log.e("Proximity","Proximity");
+                    value = sensorEvent.values;
                 }
             }else if ( sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER )
             {
 
-                if( flags.get("Accelerometer")) {
-                  //  Log.e("Accelerometer","Accelerometer");
+                if( viewHolderMap.get("Accelerometer").flag) {
+                 //   Log.e("Accelerometer","Accelerometer");
+                    value = sensorEvent.values;
 
                 }
             }else if ( sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE  )
             {
 
-                if( flags.get("Gyroscope")) {
-
-                 //   Log.e("Gyroscope","Gyroscope");
+                if( viewHolderMap.get("Gyroscope").flag) {
+                  //  Log.e("Gyroscope","Gyroscope");
+                    value = sensorEvent.values;
                 }
             }
 

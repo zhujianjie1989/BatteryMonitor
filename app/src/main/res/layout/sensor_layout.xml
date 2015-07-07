@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:columnCount="3"
-        android:rowCount="3">
+        android:rowCount="3"
+        android:focusable="false">
 
         <TextView
             android:layout_width="wrap_content"
@@ -38,7 +39,7 @@
             android:layout_gravity="fill"
             android:layout_rowSpan="2"
             android:checked="false"
-            android:focusable="false" />
+            android:focusable="true" />
 
         <TextView
             android:layout_width="wrap_content"

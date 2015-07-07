@@ -10,6 +10,6 @@ import android.util.Log;
 public class BluetoothCallBack implements BluetoothAdapter.LeScanCallback {
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        Log.e("BluetoothCallBack","address = "+device.getAddress() +" Rssi = "+rssi);
+      //  Log.e("BluetoothCallBack","address = "+device.getAddress() +" Rssi = "+rssi);
     }
 }

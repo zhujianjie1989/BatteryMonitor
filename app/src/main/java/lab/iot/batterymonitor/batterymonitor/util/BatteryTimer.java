@@ -1,6 +1,8 @@
 
 package lab.iot.batterymonitor.batterymonitor.util;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,6 +19,7 @@ public class BatteryTimer {
     private int delay;
     private int period;
     private BatteryService service;
+
     private Timer timer = new Timer();
     private File file  = new File("/sys/class/power_supply/battery/uevent");
     public BatteryTimer(BatteryService service ,int delay,int period){
@@ -26,11 +29,13 @@ public class BatteryTimer {
     }
 
     public void startTimer(){
-        this.timer.schedule(task,delay,period);
+            this.timer.schedule(task,delay,period);
     }
 
     public void stopTimer(){
-        this.stopTimer();
+
+        this.timer.cancel();
+
     }
 
 
@@ -38,6 +43,7 @@ private TimerTask task = new TimerTask() {
         @Override
         public void run() {
            // Log.e("file ", file.getPath() + " " + file.exists());
+
             BufferedReader reader = null ;
             try {
                 reader = new BufferedReader(new FileReader(file));
@@ -64,6 +70,8 @@ private TimerTask task = new TimerTask() {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+
         }
     };
 

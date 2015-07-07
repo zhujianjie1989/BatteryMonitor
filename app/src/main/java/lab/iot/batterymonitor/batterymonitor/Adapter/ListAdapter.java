@@ -35,7 +35,7 @@ public class ListAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
         private List<Map<String, String>> mData;
         private MainActivity mainActivity;
-        private  BluetoothAdapter  mBluetoothAdapter;
+
 
         private List<Map<String, String>> getData() {
 
@@ -85,7 +85,7 @@ public class ListAdapter extends BaseAdapter {
             this.mInflater = LayoutInflater.from(context);
             this.mData = getData();
             this.mainActivity = context;
-            initBluetooth();
+
         }
         @Override
         public int getCount() {
@@ -129,6 +129,7 @@ public class ListAdapter extends BaseAdapter {
 
             holder.title.setText((String) mData.get(position).get("title"));
             holder.info.setText((String) mData.get(position).get("info"));
+            holder.SensorIndex = position;
 
             String[] m={"Fast","Game","UI","Normal"};
 
@@ -143,7 +144,7 @@ public class ListAdapter extends BaseAdapter {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Log.e("spinner onItemClick", "" + position);
                     finalHolder.sp_selectIndex = position;
-                    ListAdapter.this.mainActivity.changeSensorSampleRate(finalHolder.TB_index,position);
+                   // ListAdapter.this.mainActivity.changeSensorSampleRate(finalHolder.TB_index,position);
                 }
 
                 @Override
@@ -157,87 +158,16 @@ public class ListAdapter extends BaseAdapter {
             holder.toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                     String key = mData.get(position).get("title");
-                    Log.e("toggleButton", "toggleButton onclick  " + position + " " + isChecked + " " + key);
-                    if (position == 5) {
-                        final BluetoothCallBack callBack =new BluetoothCallBack();
-                        if (isChecked) {
-                            timer = new Timer();
-                            setOff_flag(false);
-
-                            timer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    if (isOff_flag()){
-                                        mBluetoothAdapter.stopLeScan(callBack);
-                                        timer.cancel();
-                                        return;
-                                    }
-                                    if (getFlag()){
-                                        mBluetoothAdapter.startLeScan(callBack);
-                                    }
-                                    else{
-                                        mBluetoothAdapter.stopLeScan(callBack);
-                                    }
-                                    setFlag(!getFlag());
-                                }
-                            },1000,(finalHolder.sp_selectIndex+1)*1000);
-
-                        } else {
-                            setOff_flag(true);
-
-                            Log.e("timer.cancel", "timer.canceltimer.canceltimer.canceltimer.canceltimer.cancel");
-
-
-                        }
-                        return;
-                    }
-                    MainActivity.flags.put(key, isChecked);
-                    if (isChecked) {
-                        ListAdapter.this.mainActivity.registerSensor(position, finalHolder.sp_selectIndex);
-                        finalHolder.TB_index=position;
-                    } else {
-                        ListAdapter.this.mainActivity.unRegister(position);
-                        finalHolder.TB_index = -1;
-                    }
+                    finalHolder.flag = isChecked;
+                    MainActivity.viewHolderMap.put(key, finalHolder);
                 }
             });
             return convertView;
         }
 
-    private boolean flag =true;
 
-    public boolean isOff_flag() {
-        return off_flag;
-    }
 
-    public void setOff_flag(boolean off_flag) {
-        this.off_flag = off_flag;
-    }
-
-    private boolean off_flag = false;
-    private Timer timer = new Timer();
-    private void setFlag(boolean flag){
-        this.flag = flag;
-    }
-
-    private boolean getFlag(){
-        return flag;
-    }
-    private void initBluetooth(){
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            (new Toast(this.mainActivity)).makeText(this.mainActivity,"mBluetoothAdapter == null",Toast.LENGTH_LONG);
-        }
-
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            this.mainActivity.startActivityForResult(enableBtIntent, 0);
-            (new Toast(this.mainActivity)).makeText(this.mainActivity, "mBluetoothAdapter.isEnabled() ==  no", Toast.LENGTH_LONG);
-        }
-
-    }
 
 
 

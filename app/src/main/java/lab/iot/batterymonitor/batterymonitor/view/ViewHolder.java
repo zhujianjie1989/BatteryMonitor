@@ -13,5 +13,6 @@ public class ViewHolder {
     public Spinner spinner;
     public ToggleButton toggleButton;
     public int sp_selectIndex=0;
-    public int TB_index=-1;
+    public int SensorIndex=-1;
+    public boolean flag=false;
 }
