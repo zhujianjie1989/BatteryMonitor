@@ -27,7 +27,7 @@ public class BatteryService {
     public void startTimer(int lasttime){
         this.lastTime=lasttime*60*1000;
         if (!flag) {
-            timer= new BatteryTimer(this,1000,500);
+            timer= new BatteryTimer(this,1000,1000);
             timer.startTimer();
             startTime = new Date();
             flag = !flag;

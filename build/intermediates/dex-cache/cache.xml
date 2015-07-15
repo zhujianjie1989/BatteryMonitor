@@ -2,32 +2,32 @@
 <items version="2" >
 
     <item
-        jar="E:\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.0\support-annotations-22.2.0.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
-        <dex dex="E:\GitHub\BatteryMonitor\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.0-e2315d1b4130b9994f0a06fbbdeb35471a3d426b.jar" />
-    </item>
-    <item
-        jar="E:\GitHub\BatteryMonitor\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\libs\internal_impl-22.2.0.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
-        <dex dex="E:\GitHub\BatteryMonitor\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.0-9b75f5c61517f14d9d08cdacb501e1b4d8fd3f42.jar" />
-    </item>
-    <item
-        jar="E:\GitHub\BatteryMonitor\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\jars\classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
-        <dex dex="E:\GitHub\BatteryMonitor\app\build\intermediates\pre-dexed\debug\classes-bf8844113698460ba4be435c6c3d9cbdec651455.jar" />
-    </item>
-    <item
-        jar="E:\GitHub\BatteryMonitor\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\classes.jar"
+        jar="D:\zhujianjie\GitHub\BatteryMonitor\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\classes.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
-        <dex dex="E:\GitHub\BatteryMonitor\app\build\intermediates\pre-dexed\debug\classes-c97819eefb301b81270fc795400c1ca2f35ea9e3.jar" />
+        <dex dex="D:\zhujianjie\GitHub\BatteryMonitor\app\build\intermediates\pre-dexed\debug\classes-e4127a9c6635642f1f5cc7957070afb32878085d.jar" />
+    </item>
+    <item
+        jar="D:\zhujianjie\GitHub\BatteryMonitor\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\libs\internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="D:\zhujianjie\GitHub\BatteryMonitor\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.0-2db8d6eadf17e078439a1efef43504894b31eaa3.jar" />
+    </item>
+    <item
+        jar="D:\zhujianjie\GitHub\BatteryMonitor\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="D:\zhujianjie\GitHub\BatteryMonitor\app\build\intermediates\pre-dexed\debug\classes-b367892e8d14f809b222b7d3da8071bebd8328fd.jar" />
+    </item>
+    <item
+        jar="C:\Users\admin\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.0\support-annotations-22.2.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="D:\zhujianjie\GitHub\BatteryMonitor\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.0-5d1c2b736d5fe2c823bce873e8290db4bdb660bc.jar" />
     </item>
 
 </items>

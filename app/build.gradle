@@ -5,8 +5,8 @@ android {
     buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "lab.iot.batterymonitor.batterymonitor"
-        minSdkVersion 21
-        targetSdkVersion 22
+        minSdkVersion 19
+        targetSdkVersion 19
         versionCode 1
         versionName "1.0"
     }
@@ -21,6 +21,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
 }

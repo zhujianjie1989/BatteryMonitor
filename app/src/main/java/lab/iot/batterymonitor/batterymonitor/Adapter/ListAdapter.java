@@ -1,7 +1,5 @@
 package lab.iot.batterymonitor.batterymonitor.Adapter;
 
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +10,15 @@ import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import lab.iot.batterymonitor.batterymonitor.R;
 import lab.iot.batterymonitor.batterymonitor.activity.MainActivity;
-import lab.iot.batterymonitor.batterymonitor.util.BluetoothCallBack;
 import lab.iot.batterymonitor.batterymonitor.view.ViewHolder;
 
 /**
@@ -78,6 +72,16 @@ public class ListAdapter extends BaseAdapter {
             map.put("info", "Bluetooth");
             list.add(map);
 
+            map = new HashMap<String, String>();
+            map.put("title", "GPS");
+            map.put("info", "GPS");
+            list.add(map);
+
+            map = new HashMap<String, String>();
+            map.put("title", "wifi");
+            map.put("info", "wifi");
+            list.add(map);
+
             return list;
         }
 
@@ -112,9 +116,7 @@ public class ListAdapter extends BaseAdapter {
             if (convertView == null) {
 
                 holder=new ViewHolder();
-
                 convertView = mInflater.inflate(R.layout.sensor_layout, null);
-
                 holder.title = (TextView)convertView.findViewById(R.id.TV_Title);
                 holder.info = (TextView)convertView.findViewById(R.id.textView4);
                 holder.spinner = (Spinner) convertView.findViewById(R.id.SP_frequency);

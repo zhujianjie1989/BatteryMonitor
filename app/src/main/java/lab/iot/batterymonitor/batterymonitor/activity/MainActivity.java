@@ -2,14 +2,20 @@ package lab.iot.batterymonitor.batterymonitor.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -117,7 +123,7 @@ public class MainActivity extends Activity {
                 if (!button_flag) {
                     EditText time = (EditText) findViewById(R.id.EB_Timer);
                     batteryService.startTimer(Integer.parseInt(time.getText().toString()));
-                    curr_power=-1;
+                    curr_power = -1;
                     startButton.setEnabled(false);
 
                     while (ite.hasNext()) {
@@ -145,7 +151,12 @@ public class MainActivity extends Activity {
                                     }
                                 }, 1000, (viewHolderMap.get(key).sp_selectIndex + 1) * 1000);
 
-                            } else {
+                            }
+                            if (viewHolderMap.get(key).SensorIndex == 6) {
+                                startGPS();
+                            }else if (viewHolderMap.get(key).SensorIndex == 7) {
+                               startWifi();
+                            }else {
                                 registerSensor(viewHolderMap.get(key).SensorIndex, viewHolderMap.get(key).sp_selectIndex);
                             }
 
@@ -175,10 +186,13 @@ public class MainActivity extends Activity {
                 if (viewHolderMap.get(key).flag) {
                     if (viewHolderMap.get(key).SensorIndex == 5) {
                         setOff_flag(true);
-                        continue;
+                    }else if (viewHolderMap.get(key).SensorIndex == 6) {
+                        closeGPS();
+                    }else if (viewHolderMap.get(key).SensorIndex == 7) {
+                        closeWifi();
+                    }else{
+                        unRegister(viewHolderMap.get(key).SensorIndex);
                     }
-                    unRegister(viewHolderMap.get(key).SensorIndex);
-
                 }
             }
             button_flag = !button_flag;
@@ -323,6 +337,69 @@ public class MainActivity extends Activity {
 
 
         }
+
+    }
+
+    LocationManager locationManager;
+    private void startGPS()
+    {
+        locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER))
+        {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            criteria.setAltitudeRequired(true);
+            criteria.setBearingRequired(true);
+            criteria.setCostAllowed(true);
+            criteria.setPowerRequirement(Criteria.POWER_LOW);
+            criteria.setSpeedRequired(true);
+            String provider = locationManager.getBestProvider(criteria, true);
+            locationManager.requestLocationUpdates(provider, 1000, 0,locationListener);
+            Toast.makeText(this, "GPS work normal", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Toast.makeText(this, "please open GPS ", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+        startActivityForResult(intent, 0);
+
+    }
+
+    public void closeGPS(){
+        if (locationManager!=null){
+            locationManager.removeUpdates(locationListener);
+        }
+
+    }
+    private LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
+
+    public void startWifi(){
+
+    }
+
+    public void closeWifi(){
+
     }
 
 }
