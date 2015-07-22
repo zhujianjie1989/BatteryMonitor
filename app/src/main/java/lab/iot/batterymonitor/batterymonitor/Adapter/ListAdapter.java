@@ -77,10 +77,10 @@ public class ListAdapter extends BaseAdapter {
             map.put("info", "GPS");
             list.add(map);
 
-            map = new HashMap<String, String>();
+           /* map = new HashMap<String, String>();
             map.put("title", "wifi");
             map.put("info", "wifi");
-            list.add(map);
+            list.add(map);*/
 
             return list;
         }

@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
     private final int SENSOR_DELAY_GAME = 1;
     private final int SENSOR_DELAY_UI = 2;
     private final int SENSOR_DELAY_NORMAL = 3;
-    public    int curr_power = -1;
+    public  int curr_power = -1;
     private BatteryService batteryService;
     public static Map<String,ViewHolder>viewHolderMap = new HashMap<String,ViewHolder>();
     public SensorManager  sensorManager ;
@@ -62,7 +62,6 @@ public class MainActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
             TextView capcity = (TextView)findViewById(R.id.TV_Curr_capacity);
             TextView curr = (TextView)findViewById(R.id.TV_Curr_level);
             TextView usage = (TextView)findViewById(R.id.TV_usage);
